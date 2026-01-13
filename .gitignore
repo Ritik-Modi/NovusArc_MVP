@@ -1,0 +1,47 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+
+# dotenv environment variables
+.env
+.env.*
+
+# Build output
+dist/
+build/
+
+# Mac system files
+.DS_Store
+
+# VS Code settings
+.vscode/
+
+# Coverage reports
+coverage/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Docker
+*.local
+
+# Misc
+*.swp
+*.swo
+
+# Ignore frontend build artifacts
+frontend/dist/
+frontend/node_modules/
+
+# Ignore server build artifacts
+server/dist/
+server/node_modules/
+
+# Ignore test output
+server/tests/output/
