@@ -1,3 +1,5 @@
+
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 const withParams = (endpoint: string, params: Record<string, string | number>): string => {
@@ -15,6 +17,7 @@ export const authEndPoints = {
     refreshToken: `${BASE_URL}/auth/refresh`,
     sendOTP: `${BASE_URL}/auth/send-otp`,
     resetPassword: `${BASE_URL}/auth/reset-password`,
+    verify: `${BASE_URL}/auth/verify`,
 }
 
 export const userEndPoints = {
@@ -68,6 +71,7 @@ export const applicationEndPoints = {
     getStudentApplications : (studentId: string | number) => withParams(`${BASE_URL}/applications/student/:studentId`, { studentId }),
     updateApplicationStatus : (applicationId: string | number) => withParams(`${BASE_URL}/applications/:applicationId/status`, { applicationId }),
     withdrawApplication : (applicationId: string | number) => withParams(`${BASE_URL}/applications/:applicationId/withdraw`, { applicationId }),
+    getApplicationById : (id: string | number) => withParams(`${BASE_URL}/applications/:id`, { id }),
 }
 
 export const notificationEndPints = {

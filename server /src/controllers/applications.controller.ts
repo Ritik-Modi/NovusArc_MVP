@@ -1,3 +1,16 @@
+// Get application by ID
+export const getApplicationById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const application = await ApplicationModel.findById(id);
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    return res.status(200).json({ success: true, data: application });
+  } catch (error) {
+    return next(error);
+  }
+};
 import { Request, Response, NextFunction } from 'express';
 import ApplicationModel, { ApplicationStatus } from '../models/Application.model';
 import JobModel from '../models/Job.model';

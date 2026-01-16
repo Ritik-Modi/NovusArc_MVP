@@ -27,6 +27,11 @@ router.get('/job/:jobId', listApplicationsForJob);
 // list by student (current user)
 router.get('/student', listApplicationsForStudent);
 
+
+// get application by id
+import { getApplicationById } from '../controllers/applications.controller';
+router.get('/:id', getApplicationById);
+
 // update status & withdraw
 router.patch('/:id/status', updateApplicationStatus);
 router.post('/:id/withdraw', withdrawApplication);

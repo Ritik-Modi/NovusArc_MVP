@@ -1,14 +1,16 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { authEndPoints } from '../services/api';
-import { handleAxiosError } from '../utils/handleAxiosError';
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
+import { authEndPoints } from "../services/api";
+import { handleAxiosError } from "../utils/handleAxiosError";
+import type { AppDispatch } from "./store";
 
-// Types
+
 interface User {
   id: string;
   name: string;
   email: string;
-  // Add other user properties as needed
+  role: string;
 }
 
 interface AuthState {
@@ -24,11 +26,11 @@ interface LoginPayload {
   password: string;
 }
 
-interface SignupPayload {
-  name: string;
-  email: string;
-  password: string;
-}
+// interface SignupPayload {
+//   name : string;
+//   email : string;
+//   password : string;
+// }
 
 interface AuthResponse {
   user: User;
@@ -36,7 +38,6 @@ interface AuthResponse {
   message?: string;
 }
 
-// Initial state
 const initialState: AuthState = {
   user: null,
   token: null,
@@ -46,40 +47,28 @@ const initialState: AuthState = {
 };
 
 
-// Custom async action creators (thunks)
-export const loginUser = (payload: LoginPayload) => async (dispatch: any) => {
+
+const loginUser = (payload: LoginPayload) => async (dispatch: AppDispatch) => { // TOODO: we are puting any here in the dispatch can we any thing else so error not show up
   dispatch(setLoading(true));
   try {
-    const response = await axios.post<AuthResponse>(authEndPoints.login, payload, { withCredentials: true });
+    const response = await axios.post<AuthResponse>(
+      authEndPoints.login,
+      payload,
+      { withCredentials: true }
+    );
     dispatch(setUser(response.data.user));
     dispatch(setToken(response.data.token || null));
     dispatch(setError(null));
   } catch (error) {
     dispatch(setError(handleAxiosError(error)));
-    dispatch(setUser(null));
+    dispatch(setUser(null)); 
     dispatch(setToken(null));
   } finally {
     dispatch(setLoading(false));
   }
 };
 
-export const signupUser = (payload: SignupPayload) => async (dispatch: any) => {
-  dispatch(setLoading(true));
-  try {
-    const response = await axios.post<AuthResponse>(authEndPoints.signup, payload, { withCredentials: true });
-    dispatch(setUser(response.data.user));
-    dispatch(setToken(response.data.token || null));
-    dispatch(setError(null));
-  } catch (error) {
-    dispatch(setError(handleAxiosError(error)));
-    dispatch(setUser(null));
-    dispatch(setToken(null));
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
-
-export const logoutUser = () => async (dispatch: any) => {
+const logoutUser = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
   try {
     await axios.post(authEndPoints.logout, {}, { withCredentials: true });
@@ -92,7 +81,25 @@ export const logoutUser = () => async (dispatch: any) => {
   }
 };
 
-export const verifyAuthUser = () => async (dispatch: any) => {
+
+// export const signupUser = (payload: SignupPayload) => async (dispatch: any) => {
+//   dispatch(setLoading(true));
+//   try {
+//     const response = await axios.post<AuthResponse>(authEndPoints.signup, payload, { withCredentials: true });
+//     dispatch(setUser(response.data.user));
+//     dispatch(setToken(response.data.token || null));
+//     dispatch(setError(null));
+//   } catch (error) {
+//     dispatch(setError(handleAxiosError(error)));
+//     dispatch(setUser(null));
+//     dispatch(setToken(null));
+//   } finally {
+//     dispatch(setLoading(false));
+//   }
+// };
+
+
+export const verifyAuthUser = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
   try {
     const response = await axios.get<AuthResponse>(authEndPoints.verify, { withCredentials: true });
@@ -107,15 +114,16 @@ export const verifyAuthUser = () => async (dispatch: any) => {
   }
 };
 
-// Slice
+
+
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setUser(state, action: PayloadAction<User>) {
+    setUser(state, action: PayloadAction<User | null>) {
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
     },
@@ -138,12 +146,22 @@ const authSlice = createSlice({
   // No extraReducers needed
 });
 
-export const { setLoading, setUser, setToken, setError, clearAuth, clearError } = authSlice.actions;
-export default authSlice.reducer;
+export const {
+  setLoading,
+  setUser,
+  setToken,
+  setError,
+  clearAuth,
+  clearError,
+} = authSlice.actions;
 
-// Selectors
-export const selectAuth = (state: { auth: AuthState }) => state.auth;
-export const selectUser = (state: { auth: AuthState }) => state.auth.user;
-export const selectIsAuthenticated = (state: { auth: AuthState }) => state.auth.isAuthenticated;
-export const selectAuthLoading = (state: { auth: AuthState }) => state.auth.loading;
-export const selectAuthError = (state: { auth: AuthState }) => state.auth.error;
+export const seleteAuth = (state: { auth: AuthState }) => state.auth;
+export const seleteUser = (state: { auth: AuthState }) => state.auth.user;
+export const seleteIsAuthenticated = (state: { auth: AuthState }) =>
+  state.auth.isAuthenticated;
+export const seleteAuthLoading = (state: { auth: AuthState }) =>
+  state.auth.loading;
+export const seleteAuthError = (state: { auth: AuthState }) => state.auth.error;
+
+export default authSlice.reducer;
+export { loginUser, logoutUser };

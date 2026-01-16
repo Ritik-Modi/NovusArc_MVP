@@ -1,3 +1,22 @@
+// Verify authentication and return user info
+import { isAuthenticated } from '../middleware/auth.middleware';
+
+export const verifyAuth = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // user is attached by isAuthenticated middleware
+    const user = (req as any).user;
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+    return res.status(200).json({
+      success: true,
+      message: 'Authenticated',
+      data: { user }
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
 import { Request, Response, NextFunction } from 'express';
 import UserModel, { IUser } from '../models/User.model';
 import jwt, { SignOptions } from 'jsonwebtoken';
